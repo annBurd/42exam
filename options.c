@@ -12,18 +12,17 @@
 
 #include <unistd.h>
 
-# define ERROR "options: abcdefghijklmnopqrstuvwxyz\n"
-# define ERROR2 "Invalid Optioni\n"
-
 #include <stdio.h>
-size_t	str_len(char *s)
+
+void	write_str(char *s)
 {
 	size_t	i;
 	
 	i = 0;
-	while (*s++)
+	while (s[i])
 		i++;
-	return (i);
+	write(1, s, i);
+	write(1, "\n", 1);
 }
 
 int		valid_options(char **argv)
@@ -39,12 +38,12 @@ int		valid_options(char **argv)
 		{
 			if (argv[i][t] == 'h')
 			{
-				write(1, ERROR, str_len(ERROR));
+				write_str("options: abcdefghijklmnopqrstuvwxyz");
 				return (0);
 			}
 			else if ((argv[i][t] < 'a' || argv[i][t] > 'z') && argv[i][t] != '-')
 			{
-				write(1, ERROR2, str_len(ERROR2));
+				write_str("Invalid Option");
 				return (0);
 			}
 			t++;
@@ -70,12 +69,11 @@ int		zero(char c)
 	return (i);
 }
 
-size_t	start(int i, char **ar, char *out)
+void	start(int i, char **ar, char *out)
 {
-	size_t	size;
-	int		a;
+	const size_t	size = 35;
+	int				a;
 
-	size = str_len(out);
 	while (ar[i])
 	{
 		a = 0;
@@ -84,28 +82,27 @@ size_t	start(int i, char **ar, char *out)
 			a++;
 			while (ar[i][a])
 			{
-				printf("%lu\n", size - 1 - zero(ar[i][a]));
-				out[size - 1 - zero(ar[i][a])] = '1';
+				printf("%lu\n", size - zero(ar[i][a]));
+				out[size - zero(ar[i][a])] = '1';
 				printf("out - %s", out);
 				a++;
 			}
 		}
 		i++;
 	}
-	return (size);
 }
 
 int		main(int argc, char ** argv)
 {
-	char	*out;
-	size_t	size;
+	const size_t	size = 35;
+	char			*out;
 
 	if (argc == 1)
-		write(1, ERROR, str_len(ERROR));
+		write_str("options: abcdefghijklmnopqrstuvwxyz");
 	else if (valid_options(argv))
 	{
-		out = "00000000 00000000 00000000 00000000\n";
-		size = start(1, argv, out);
+		out = "00000000 00000000 00000000 00000000";
+		start(1, argv, out);
 		write(1, out, size);
 	}
 
